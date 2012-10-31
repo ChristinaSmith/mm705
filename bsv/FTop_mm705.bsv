@@ -38,7 +38,7 @@ MLProducerIfc   producer1  <- mkMLProducer(mLength, lMode, 0, 0, dMode, 8'hAA);
 MLProducerIfc   producer2  <- mkMLProducer(mLength, lMode, 0, 0, dMode, 8'hEE);
 MLConsumerIfc   consumer   <- mkMLConsumer;
 
-rule mergeMeta(meta);
+/*rule mergeMeta(meta);
   UInt#(32) lenVal = producer2.meta.first.length;
   length <= lenVal;
   prodMergeF.enq(tagged Meta producer2.meta.first);
@@ -63,7 +63,7 @@ rule forkMesg;
   endcase
   consForkF.deq;
 endrule
-
+*/
 rule countCycles;
   cycleCount <= cycleCount + 1;
   if(cycleCount%100==0)$display("[%0d] simulation cycle:%0d ...", $time, cycleCount);
@@ -74,10 +74,10 @@ rule endSim;
 endrule
 
 
-mkConnection(producer1.meta, consumer.metaExpected);
-mkConnection(producer1.data, consumer.dataExpected);
+mkConnection(producer1.mesg, consumer.mesgExpected);
+//mkConnection(producer1.data, consumer.dataExpected);
 
-//mkConnection(producer2.meta, consumer.metaReceived);
+mkConnection(producer2.mesg, consumer.mesgReceived);
 //mkConnection(producer2.data, consumer.dataReceived);
 
 

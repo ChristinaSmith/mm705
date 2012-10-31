@@ -10,8 +10,9 @@ import LFSR       ::*;
 import Vector     ::*;
 
 interface MLProducerIfc;
-  interface GetS#(MLMeta) meta;
-  interface Get#(HexByte) data;
+//  interface GetS#(MLMeta) meta;
+//  interface Get#(HexByte) data;
+  interface Get#(MLMesg) mesg;
 endinterface
 
 //sls: Carefull! you were sending the test scenario in as FormalArgs, not FormalParams
@@ -30,8 +31,9 @@ module mkMLProducer#(UInt#(32)  length,
 function Bit#(8) asByte(Integer i) = fromInteger(i);
 HexByte initHB = genWith(asByte);
 
-FIFO#(HexByte)          dataEgressF   <- mkFIFO;
-FIFO#(MLMeta)           metaEgressF   <- mkFIFO;
+//FIFO#(HexByte)          dataEgressF   <- mkFIFO;
+//FIFO#(MLMeta)           metaEgressF   <- mkFIFO;
+FIFO#(MLMesg)           mesgEgressF   <- mkFIFO;
 FIFO#(UInt#(32))        nextLengthF   <- mkFIFO;
 Reg#(UInt#(32))         lengthR       <- mkReg(0);
 Reg#(Bit#(8))           opCode        <- mkReg(0);
@@ -48,16 +50,6 @@ LFSR#(Bit#(32))         lfsr          <- mkLFSR_32;
 
 function Bit#(8) addX (Bit#(8) y, Bit#(8) x) = y + x;
 
-// sls: I wrote the function nukeBytes before seeing this was here 
-// nukeByes is only in the nuking business; not doing both generation and masking.
-/*function HexByte generateHexWord (UInt#(32) length, HexByte pattern, UInt#(32) count);
-  if(length < count) begin
-    UInt#(5) remainder = truncate(length % 16);
-    for(Integer i = 0; (fromInteger(i) < (16-remainder)); i = i+1) pattern[15-i] = ?;
-  end
-  return pattern;
-endfunction
-*/
 /////////////////////////////// Meta /////////////////////////////////// 
 
 // sls: startLFSR was redundant = !seedLFSR
@@ -94,7 +86,8 @@ endrule
 // be the first time through, when a message has been sent or aborted...
 rule generateMeta (!isValid(bytesRemain));
   opCode <= opCode + 1;
-  metaEgressF.enq(MLMeta{opcode:opCode, length:nextLengthF.first}); nextLengthF.deq;
+//  metaEgressF.enq(MLMeta{opcode:opCode, length:nextLengthF.first}); nextLengthF.deq;
+  mesgEgressF.enq(tagged Meta MLMeta{opcode:opCode, length:nextLengthF.first}); nextLengthF.deq;
   bytesRemain <= tagged Valid nextLengthF.first;
   zeroLen <= (nextLengthF.first == 0);
 endrule
@@ -120,7 +113,7 @@ rule genData (isValid(bytesRemain));
   UInt#(32) br = fromMaybe(?,bytesRemain);  // br is bytesRemain with Maybe bit stripped
   Bool lastWord = (br<=16);                 // check if this will be our last hex word
   UInt#(5) numBytesValid = (lastWord) ? truncate(br) : 16;
-  if(!zeroLen) dataEgressF.enq(nukeBytes(patternV,numBytesValid)); // Enq the properly masked patternV HexWord
+  if(!zeroLen) mesgEgressF.enq(tagged Data nukeBytes(patternV,numBytesValid)); // Enq the properly masked patternV HexWord
   if(lastWord) begin
     case (dMode)
       ZeroOrigin: begin
@@ -145,6 +138,7 @@ endrule
 // Using a multi-arm if or case is fine here; since we are just changing what we assign
 // to one variable
 
-interface meta = fifoToGetS(metaEgressF);
-interface data = toGet(dataEgressF);
+//interface meta = fifoToGetS(metaEgressF);
+//interface data = toGet(dataEgressF);
+interface mesg = toGet(mesgEgressF);
 endmodule

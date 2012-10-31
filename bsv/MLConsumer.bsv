@@ -9,15 +9,17 @@ import FIFO       ::*;
 import Vector     ::*;
 
 interface MLConsumerIfc;
-  interface Put#(MLMeta)  metaExpected;
-  interface Put#(MLMeta)  metaReceived;
-  interface Put#(HexByte) dataExpected;
-  interface Put#(HexByte) dataReceived;
+  interface Put#(MLMesg)  mesgExpected;
+  interface Put#(MLMesg)  mesgReceived;
+//  interface Put#(HexByte) dataExpected;
+//  interface Put#(HexByte) dataReceived;
 endinterface
 
 (* synthesize *)
 module mkMLConsumer(MLConsumerIfc);
 
+FIFO#(MLMesg)           mesgIngressExpF <- mkFIFO;
+FIFO#(MLMesg)           mesgIngressRcvF <- mkFIFO;
 FIFO#(MLMeta)           metaIngressExpF <- mkFIFO;
 FIFO#(MLMeta)           metaIngressRcvF <- mkFIFO;
 FIFO#(HexByte)          dataIngressExpF <- mkFIFO;
@@ -34,6 +36,22 @@ Reg#(Maybe#(UInt#(32))) bytesRemain     <- mkReg(tagged Invalid);
 // sls: We need to take exactly one meta per message and then consume
 //  the data. We will use the Maybe Type for bytesRemain in a manner similar
 //  to MLProducer to accomplish the task...
+
+rule forkMesgExp;
+  case (mesgIngressExpF.first) matches
+    tagged Meta .m: metaIngressExpF.enq(m);
+    tagged Data .d: dataIngressExpF.enq(d);
+  endcase
+  mesgIngressExpF.deq;
+endrule
+
+rule forkMesgRcv;
+  case (mesgIngressRcvF.first) matches
+    tagged Meta .m: metaIngressRcvF.enq(m);
+    tagged Data .d: dataIngressRcvF.enq(d);
+  endcase
+  mesgIngressRcvF.deq;
+endrule 
 
 rule compareMeta (!isValid(bytesRemain));
   MLMeta expd = metaIngressExpF.first;
@@ -116,8 +134,8 @@ rule compareData (isValid(bytesRemain));
 
  endrule
 
-  interface metaExpected = toPut(metaIngressExpF);
-  interface metaReceived = toPut(metaIngressRcvF);
-  interface dataExpected = toPut(dataIngressExpF);
-  interface dataReceived = toPut(dataIngressRcvF);
+  interface mesgExpected = toPut(mesgIngressExpF);  //create and use correct FIFO here
+  interface mesgReceived = toPut(mesgIngressRcvF);
+//  interface dataExpected = toPut(dataIngressExpF);
+//  interface dataReceived = toPut(dataIngressRcvF);
 endmodule
