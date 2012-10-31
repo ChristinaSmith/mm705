@@ -75,31 +75,36 @@ function HexByte nukeBytes(HexByte pat, UInt#(5) val);
 endfunction
 
 rule compareData (isValid(bytesRemain));
-  HexByte expd = dataIngressExpF.first;
-  HexByte rcvd = dataIngressRcvF.first;
-  dataIngressExpF.deq;
-  dataIngressRcvF.deq;
 
   UInt#(32) br = fromMaybe(?,bytesRemain);  // br is bytesRemain with Maybe bit stripped
   Bool lastWord = (br<=16);                 // check if this will be our last hex word
   bytesRemain <= (lastWord) ? tagged Invalid : tagged Valid (br-16);
+  Bool zeroLen = (br == 0);  
 
-
-  // TODO: Make comparison only depend on the valid bytes. In other words,
+  if(!zeroLen) begin
+    HexByte expd = dataIngressExpF.first;
+    HexByte rcvd = dataIngressRcvF.first;
+    dataIngressExpF.deq;
+    dataIngressRcvF.deq;
+  
+    // TODO: Make comparison only depend on the valid bytes. In other words,
   // bytes that are not valid can mis-match without any error. Hint: You can
   // use nukeBytes to nuke *both* the expected and received!
-  UInt#(5) numBytesValid = (lastWord) ? truncate(br) : 16;
-  rcvd = nukeBytes(rcvd, numBytesValid);
-  expd = nukeBytes(expd, numBytesValid);
-  Bool dataMatch = (expd == rcvd);
-  cmpDataMatch <= dataMatch;
+    
+    UInt#(5) numBytesValid = (lastWord) ? truncate(br) : 16;
+    rcvd = nukeBytes(rcvd, numBytesValid);
+    expd = nukeBytes(expd, numBytesValid);
+    Bool dataMatch = (expd == rcvd);
+    cmpDataMatch <= dataMatch;
   
-  if(dataMatch) begin
-    $display("[%0d] Data Match OK| expected | %0x | received | %0x", $time, expd, rcvd);
-    correctData <= correctData + 1;
-  end else begin
-    $display("[%0d] Data Mismatch Error| expected | %0x | received | %0x", $time, expd, rcvd);
-    incorrectData <= incorrectData + 1;
+    if(dataMatch) begin
+      $display("[%0d] Data Match OK| expected | %0x | received | %0x", $time, expd, rcvd);
+      correctData <= correctData + 1;
+    end else begin
+      $display("[%0d] Data Mismatch Error| expected | %0x | received | %0x", $time, expd, rcvd);
+      incorrectData <= incorrectData + 1;
+    end
+
   end
 
   if (lastWord) begin
@@ -108,6 +113,7 @@ rule compareData (isValid(bytesRemain));
     msgConsumeCnt <= msgConsumeCnt + 1;
     $display("[%0d] MLConsumer has finished message %0d", $time, msgConsumeCnt);
   end
+
  endrule
 
   interface metaExpected = toPut(metaIngressExpF);

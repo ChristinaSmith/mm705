@@ -16,9 +16,9 @@ module mkFTop_mm705(Empty);
 Reg#(Bit#(32)) cycleCount <- mkReg(0);
 
 // sls: specify these once
-UInt#(32)  mLength = 1;
+UInt#(32)  mLength = 0;
 //LengthMode lMode   = Constant; // Incremental;
-LengthMode lMode   = Incremental;
+LengthMode lMode   = Constant;
 DataMode   dMode   = ZeroOrigin;
 
 // sls: It appears that

@@ -39,6 +39,7 @@ Reg#(Bit#(8))           dataInitVal   <- mkReg(1);
 Reg#(HexByte)           patternV      <- mkReg(initHB);
 Reg#(Bool)              seedLFSR      <- mkReg(True);
 Reg#(Bool)              first         <- mkReg(True);
+Reg#(Bool)              zeroLen       <- mkReg(False);
 Reg#(Bit#(9))           minLen        <- mkReg(maxBound);
 Reg#(Bit#(9))           maxLen        <- mkReg(minBound);
 Reg#(UInt#(32))         countHexByte  <- mkReg(0);
@@ -49,14 +50,14 @@ function Bit#(8) addX (Bit#(8) y, Bit#(8) x) = y + x;
 
 // sls: I wrote the function nukeBytes before seeing this was here 
 // nukeByes is only in the nuking business; not doing both generation and masking.
-function HexByte generateHexWord (UInt#(32) length, HexByte pattern, UInt#(32) count);
+/*function HexByte generateHexWord (UInt#(32) length, HexByte pattern, UInt#(32) count);
   if(length < count) begin
     UInt#(5) remainder = truncate(length % 16);
     for(Integer i = 0; (fromInteger(i) < (16-remainder)); i = i+1) pattern[15-i] = ?;
   end
   return pattern;
 endfunction
-
+*/
 /////////////////////////////// Meta /////////////////////////////////// 
 
 // sls: startLFSR was redundant = !seedLFSR
@@ -95,6 +96,7 @@ rule generateMeta (!isValid(bytesRemain));
   opCode <= opCode + 1;
   metaEgressF.enq(MLMeta{opcode:opCode, length:nextLengthF.first}); nextLengthF.deq;
   bytesRemain <= tagged Valid nextLengthF.first;
+  zeroLen <= (nextLengthF.first == 0);
 endrule
 
 ////////////////////////////////// Data /////////////////////////////////////
@@ -118,7 +120,7 @@ rule genData (isValid(bytesRemain));
   UInt#(32) br = fromMaybe(?,bytesRemain);  // br is bytesRemain with Maybe bit stripped
   Bool lastWord = (br<=16);                 // check if this will be our last hex word
   UInt#(5) numBytesValid = (lastWord) ? truncate(br) : 16;
-  dataEgressF.enq(nukeBytes(patternV,numBytesValid)); // Enq the properly masked patternV HexWord
+  if(!zeroLen) dataEgressF.enq(nukeBytes(patternV,numBytesValid)); // Enq the properly masked patternV HexWord
   if(lastWord) begin
     case (dMode)
       ZeroOrigin: begin

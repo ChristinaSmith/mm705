@@ -25,6 +25,12 @@ typedef enum {
 
 typedef Vector#(16,Bit#(8)) HexByte;
 
+typedef union tagged {
+  MLMeta Meta;
+  HexByte Data;
+} MLMesg deriving(Bits, Eq);
+
+
 interface MLProducer;
   interface GetS#(MLMeta) meta;    // GetS splits the "first" and "deq" methods so we can observe
   interface Get#(HexByte) data;    // Our message data
