@@ -5,10 +5,13 @@
 import MLDefs      ::*; //sls: Keep your local imports separate from the BSV ones, so you stay aware
 import MLProducer  ::*;
 import MLConsumer  ::*;
+import Sender      ::*;
+import Receiver    ::*;
 
 import Clocks      ::*;
 import Connectable ::*;
 import FIFO        ::*;
+import ClientServer ::*;
 import GetPut      ::*;
 
 module mkFTop_mm705(Empty);
@@ -37,48 +40,27 @@ DataMode   dMode   = ZeroOrigin;
 MLProducerIfc   producer1  <- mkMLProducer(mLength, lMode, 0, 0, dMode, 8'hAA);
 MLProducerIfc   producer2  <- mkMLProducer(mLength, lMode, 0, 0, dMode, 8'hEE);
 MLConsumerIfc   consumer   <- mkMLConsumer;
+SenderIfc       sender     <- mkSender;
+ReceiverIfc     receiver   <- mkReceiver;
 
-/*rule mergeMeta(meta);
-  UInt#(32) lenVal = producer2.meta.first.length;
-  length <= lenVal;
-  prodMergeF.enq(tagged Meta producer2.meta.first);
-  producer2.meta.deq;
-  if(lenVal != 0) meta <= !meta;
-endrule
 
-rule mergeData(!meta);
-  let x <- producer2.data.get;
-  prodMergeF.enq(tagged Data x);
-  Bool lastWord = (length <= 16);
-  length <= length - 16;
-  if(lastWord) meta <= !meta;
-endrule
-
-mkConnection(toGet(prodMergeF), toPut(consForkF));
-
-rule forkMesg;
-  case (consForkF.first) matches
-    tagged Meta .m: consumer.metaReceived.put(m);
-    tagged Data .d: consumer.dataReceived.put(d);
-  endcase
-  consForkF.deq;
-endrule
-*/
 rule countCycles;
   cycleCount <= cycleCount + 1;
   if(cycleCount%100==0)$display("[%0d] simulation cycle:%0d ...", $time, cycleCount);
 endrule
 
 rule endSim;
-  if(cycleCount == 1000) $finish;
+  if(cycleCount == 50) $finish;
 endrule
 
 
-mkConnection(producer1.mesg, consumer.mesgExpected);
-//mkConnection(producer1.data, consumer.dataExpected);
+mkConnection(producer1.mesg, sender.mesg);
 
-mkConnection(producer2.mesg, consumer.mesgReceived);
-//mkConnection(producer2.data, consumer.dataReceived);
+mkConnection(sender.datagram, receiver.datagram);
+
+mkConnection(receiver.mesg, consumer.mesgReceived);
+
+mkConnection(producer2.mesg, consumer.mesgExpected);
 
 
 endmodule

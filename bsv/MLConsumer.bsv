@@ -7,6 +7,7 @@ import MLDefs     ::*;
 import GetPut     ::*;
 import FIFO       ::*;
 import Vector     ::*;
+import ClientServer ::*;
 
 interface MLConsumerIfc;
   interface Put#(MLMesg)  mesgExpected;
