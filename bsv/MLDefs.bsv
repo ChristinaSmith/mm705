@@ -5,19 +5,31 @@ package MLDefs;
 
 import GetPut  ::*;
 import Vector  ::*;
+import DefaultValue ::*;
 
 typedef struct {
-  Bit#(8)   opcode;   // Message Opcode
   UInt#(32) length;   // Message Length in Bytes
+  Bit#(8)   opcode;   // Message Opcode
 } MLMeta deriving (Bits, Eq);
 
 typedef struct {
-  UInt#(32) length;
-  Bit#(8) opcode;
-  Bit#(8) portID;
-  Bit#(15) reserved;
-  Bit#(1) alwaysOne;
+  UInt#(32)   length;
+  Bit#(8)     opcode;
+  Bit#(8)     portID;
+  Bit#(15)    reserved;
+  Bit#(1)     alwaysOne;
 } RDMAMeta deriving (Bits, Eq);
+
+instance DefaultValue#(RDMAMeta);
+defaultValue = 
+  RDMAMeta {
+  length:    0,
+  opcode:    0,
+  portID:    0,
+  reserved:  0,
+  alwaysOne: 1
+};
+endinstance
 
 typedef enum {
   Constant = 0,
