@@ -110,15 +110,15 @@ rule genMH (!mhValid && fcs==MsgHead);
   UInt#(16) bLenMD = (madeMeta) ? mesgDataLen : 8;    // TODO: Big-M message slicing to replace truncate
   bytesRemainMD <= bLenMD;                            // Update state so that enqMD can operate
   mh <= DPPMessageHeader {       // Update the Message Header structure...
-    tid : (madeMeta) ? mh.tid + 1 : mh.tid,  // Increment the transaction number only once per transaction
+    tid : (!madeMeta) ? mh.tid + 1 : mh.tid,  // Increment the transaction number only once per transaction
     fa  : 32'hFEED_C0DE,         // Flag address
     fv  : 32'hCAFE_BABE,         // Flag value
     nm  : 2,                     // Number of messages in this transaction
     ms  : (madeMeta) ? 0 : 1,    // Message sequence number
     da  : 32'hBEEF_F00D,         // Data address (target write address)
     dl  : bLenMD,                // Length in Bytes of data that follows in MD field
-    mt  : (madeMeta) ? 1 : 0,    // Message Type
-    tm   : 8'h01  };             // Frame has as at least one message
+    mt  : (madeMeta) ? 0 : 1,    // Message Type
+    tm  : (madeMeta) ? 0 : 1  }; // Trailing message: True if at least one message after this one
   mhValid <= True;
 endrule
 
