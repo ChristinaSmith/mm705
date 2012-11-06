@@ -37,7 +37,12 @@ LFSR#(Bit#(32))         lfsr          <- mkLFSR_32;
 
 function Bit#(8) addX (Bit#(8) y, Bit#(8) x) = y + x;
   
-  
+rule gobble;
+  $display("Bytes on Wire: %0x", reverse(datagramIngressF.first.data));
+  datagramIngressF.deq;
+endrule
+
+
   interface Server datagram;
     interface request = toPut(datagramIngressF);
     //interface response = toGet();

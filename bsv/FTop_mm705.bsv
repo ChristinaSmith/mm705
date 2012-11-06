@@ -25,9 +25,9 @@ Reg#(UInt#(32)) count     <- mkReg(0);
 Reg#(UInt#(32)) length    <- mkRegU;
 
 // sls: specify these once
-UInt#(32)  mLength = 2;
-//LengthMode lMode   = Constant; // Incremental;
-LengthMode lMode   = Incremental;
+UInt#(32)  mLength = 32;
+LengthMode lMode   = Constant; // Incremental;
+//LengthMode lMode   = Incremental;
 DataMode   dMode   = ZeroOrigin;
 
 // sls: It appears that
@@ -50,7 +50,7 @@ rule countCycles;
 endrule
 
 rule endSim;
-  if(cycleCount == 500)begin $display("Terminating Simulation..."); $finish; end
+  if(cycleCount == 50)begin $display("Terminating Simulation..."); $finish; end
 endrule
 
 

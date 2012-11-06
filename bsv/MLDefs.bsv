@@ -12,25 +12,6 @@ typedef struct {
   Bit#(8)   opcode;   // Message Opcode
 } MLMeta deriving (Bits, Eq);
 
-typedef struct {
-  UInt#(32)   length;
-  Bit#(8)     opcode;
-  Bit#(8)     portID;
-  Bit#(15)    reserved;
-  Bit#(1)     alwaysOne;
-} RDMAMeta deriving (Bits, Eq);
-
-instance DefaultValue#(RDMAMeta);
-defaultValue = 
-  RDMAMeta {
-  length:    0,
-  opcode:    0,
-  portID:    0,
-  reserved:  0,
-  alwaysOne: 1
-};
-endinstance
-
 typedef enum {
   Constant = 0,
   Incremental = 1,
@@ -49,6 +30,20 @@ typedef union tagged {
   MLMeta Meta;
   HexByte Data;
 } MLMesg deriving (Bits, Eq);
+
+function MLMeta getMeta(MLMesg x);
+  case (x) matches
+    tagged Meta  .z: return(z);
+    tagged Data  .z: return(?);
+  endcase
+endfunction
+
+function HexByte getData(MLMesg x);
+  case (x) matches
+    tagged Meta  .z :return(?);
+    tagged Data  .z: return(z);
+  endcase
+endfunction
 
 typedef struct {
   HexByte data;     // 16B of data, little endian packed

@@ -10,16 +10,28 @@ import Reserved        ::*;
 import TieOff          ::*;
 import Vector          ::*;
 
+// The ByteVector typeclass standardizes our way of converting to/from Byte vectors
+// The convention we use is that...
+//   the 0th Byte has the first "Byte on the wire"
+//   the Nth Byte has the last  "Byte on the wire"
+
+// TODO: How to properly apply the provisos Bits#(a,TMul#(n,8)) to toByteVector?
+
+typeclass ByteVector #(type a, numeric type n);
+//function Vector#(n,Bit#(8)) toByteVector(a x) = reverse(unpack(pack(x)));
+  function Vector#(n,Bit#(8)) toByteVector(a x);
+  function a                  fromByteVector(Vector#(n,Bit#(8)) x);
+endtypeclass
+
 
 // DPP Frame Header - 10B total...
 typedef struct {
-  Bool      valid; // Desire to maintain state even if data is not valid
   Bit#(16)  did;   // Destination ID
   Bit#(16)  sid;   // Source ID
   UInt#(16) fs;    // Frame Sequence number (rolling count)
   UInt#(16) as;    // ACKstart (start of ACK sequence)
   UInt#(8)  ac;    // ACKCount (number of ACKs)
-  Bit#(8)   f;     // Flags (0==ACK Only Frame; 1==Frame has at least 1 message)i
+  Bit#(8)   f;     // Flags (0==ACK Only Frame; 1==Frame has at least 1 message)
 } DPPFrameHeader deriving (Eq, Bits);  
 
 instance DefaultValue#(DPPFrameHeader);
@@ -30,14 +42,16 @@ defaultValue =
     fs:    0,
     as:    0,
     ac:    0,
-    f:     0,
-    valid: False
+    f:     0
   };
+endinstance
+
+instance ByteVector #(DPPFrameHeader, 10);
+  function Vector#(10,Bit#(8)) toByteVector (DPPFrameHeader x) = reverse(unpack(pack(x)));
 endinstance
 
 // DPP Message Header - 24B total...
 typedef struct {
-  Bool      valid; // Desire to maintain state even if data is not valid
   UInt#(32) tid;   // Transaction ID (rolling count)
   UInt#(32) fa;    // Flag Address
   Bit#(32)  fv;    // Flag Value
@@ -60,9 +74,38 @@ defaultValue =
     da:    0,
     dl:    0,
     mt:    0,
-    tm:    0,
-    valid: False
+    tm:    0
   };
 endinstance
+
+instance ByteVector #(DPPMessageHeader, 24);
+  function Vector#(24,Bit#(8)) toByteVector (DPPMessageHeader x) = reverse(unpack(pack(x)));
+endinstance
+
+// RDMA Protocol...
+
+typedef struct {
+  UInt#(32)   length;
+  Bit#(8)     opcode;
+  Bit#(8)     portID;
+  Bit#(8)     byte6;
+  Bit#(8)     byte7;
+} RDMAMeta deriving (Bits, Eq);
+
+instance DefaultValue#(RDMAMeta);
+defaultValue = 
+  RDMAMeta {
+  length:  0,
+  opcode:  0,
+  portID:  0,
+  byte6:   0,
+  byte7:   1
+};
+endinstance
+
+instance ByteVector #(RDMAMeta, 8);
+  function Vector#(8,Bit#(8)) toByteVector (RDMAMeta x) = reverse(unpack(pack(x)));
+endinstance
+
 
 endpackage: DPPDefs
