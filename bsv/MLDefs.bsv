@@ -51,6 +51,11 @@ typedef struct {
   Bool isEOP;       // True if this is the end of packet
 } HexBDG deriving (Bits, Eq);
 
+typedef enum {
+  FrmHead,
+  MsgHead,
+  MsgData
+} FrmCompState deriving(Bits, Eq);
 
 interface MLProducer;
   interface GetS#(MLMeta) meta;    // GetS splits the "first" and "deq" methods so we can observe

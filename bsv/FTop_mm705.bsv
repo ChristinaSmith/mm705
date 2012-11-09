@@ -7,6 +7,8 @@ import MLProducer  ::*;
 import MLConsumer  ::*;
 import Sender      ::*;
 import Receiver    ::*;
+import FDU         ::*;
+import FAU         ::*;
 
 import Clocks      ::*;
 import Connectable ::*;
@@ -25,7 +27,7 @@ Reg#(UInt#(32)) count     <- mkReg(0);
 Reg#(UInt#(32)) length    <- mkRegU;
 
 // sls: specify these once
-UInt#(32)  mLength = 32;
+UInt#(32)  mLength = 8000;
 LengthMode lMode   = Constant; // Incremental;
 //LengthMode lMode   = Incremental;
 DataMode   dMode   = ZeroOrigin;
@@ -42,6 +44,8 @@ MLProducerIfc   producer2  <- mkMLProducer(mLength, lMode, 0, 0, dMode, 8'hEE);
 MLConsumerIfc   consumer   <- mkMLConsumer;
 SenderIfc       sender     <- mkSender;
 ReceiverIfc     receiver   <- mkReceiver;
+FDUIfc          fdu        <- mkFDU;
+FAUIfc          fau        <- mkFAU;
 
 
 rule countCycles;
@@ -50,17 +54,22 @@ rule countCycles;
 endrule
 
 rule endSim;
-  if(cycleCount == 50)begin $display("Terminating Simulation..."); $finish; end
+  if(cycleCount == 15000)begin $display("Terminating Simulation..."); $finish; end
 endrule
 
 
 mkConnection(producer1.mesg, sender.mesg);
 
-mkConnection(sender.datagram, receiver.datagram);
+mkConnection(sender.datagram, fdu.datagramSnd);
+
+mkConnection(fdu.datagramRcv, fau.datagramSnd); 
+
+mkConnection(fau.datagramRcv, receiver.datagram);
 
 mkConnection(receiver.mesg, consumer.mesgReceived);
 
 mkConnection(producer2.mesg, consumer.mesgExpected);
+
 
 
 endmodule

@@ -1,0 +1,47 @@
+#-----------------------------------------------------------
+# Vivado v2012.3 (64-bit)
+# Build 209282 by xbuild on Thu Oct 18 20:46:04 MDT 2012
+# Start of session at: Thu Nov  8 15:13:59 2012
+# Process ID: 12598
+# Log file: /home/cms/projects/mm705_v3/vivado.log
+# Journal file: /home/cms/projects/mm705_v3/vivado.jou
+#-----------------------------------------------------------
+start_gui
+create_project mm705 /home/cms/projects/mm705_v3/mm705 -part xc7k325tffg900-1
+add_files -norecurse {/home/cms/projects/mm705_v3/fpgaTop_mm705.v /home/cms/projects/mm705_v3/rtl/mkFTop_mm705.v /home/cms/projects/mm705_v3/rtl/mkMLConsumer.v /home/cms/projects/mm705_v3/rtl/mkMLProducer.v /home/cms/projects/mm705_v3/rtl/mkReceiver.v /home/cms/projects/mm705_v3/rtl/mkSender.v}
+import_files -force -norecurse
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+update_compile_order -fileset sim_1
+add_files -fileset constrs_1 -norecurse /home/cms/projects/mm705_v3/kc705.xdc
+import_files -fileset constrs_1 /home/cms/projects/mm705_v3/kc705.xdc
+launch_runs synth_1
+wait_on_run synth_1
+remove_files -fileset constrs_1 /home/cms/projects/mm705_v3/mm705/mm705.srcs/constrs_1/imports/mm705_v3/kc705.xdc
+add_files -fileset constrs_1 -norecurse /home/cms/projects/mm705_v3/kc705.xdc
+import_files -fileset constrs_1 -force /home/cms/projects/mm705_v3/kc705.xdc
+import_files -norecurse {/opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM1.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM1BE.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM1BELoad.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM1Load.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM2.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM2BE.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM2BELoad.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BRAM2Load.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BypassCrossingWire.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/BypassWire.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ClockDiv.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ClockGen.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ClockInverter.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ClockMux.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ClockSelect.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ConfigRegA.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ConfigRegN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ConfigRegUN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ConstrainedRandom.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ConvertFromZ.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ConvertToZ.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/Counter.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/CrossingBypassWire.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/CrossingRegA.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/CrossingRegN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/CrossingRegUN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/DualPortRam.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/Empty.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFO1.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFO10.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFO2.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFO20.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFOL1.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFOL10.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFOL2.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/FIFOL20.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/Fork.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/GatedClock.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/GatedClockDiv.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/GatedClockInverter.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/InitialReset.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/InoutConnect.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/LatchCrossingReg.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/MakeClock.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/MakeReset.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/MakeReset0.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/MakeResetA.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/McpRegUN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ProbeCapture.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ProbeHook.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ProbeMux.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ProbeTrigger.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ProbeValue.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ProbeWire.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RWire.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RWire0.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegA.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegAligned.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegFile.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegFileLoad.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegTwoA.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegTwoN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegTwoUN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RegUN.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ResetEither.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ResetInverter.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ResetMux.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ResetToBool.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ResolveZ.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/RevertReg.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SampleReg.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/ScanIn.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SizedFIFO.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SizedFIFO0.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SizedFIFOL.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SizedFIFOL0.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncBit.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncBit05.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncBit1.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncBit15.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncFIFO.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncFIFO1.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncFIFOLevel.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncHandshake.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncPulse.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncRegister.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncReset.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncReset0.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncResetA.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/SyncWire.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/TriState.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/UngatedClockMux.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/UngatedClockSelect.v /opt/Bluespec/Bluespec-2012.09.beta1B/lib/Verilog/main.v}
+update_compile_order -fileset sources_1
+reset_run synth_1
+launch_runs synth_1
+wait_on_run synth_1
+reset_run synth_1
+launch_runs synth_1
+wait_on_run synth_1
+reset_run synth_1
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkFTop_mm705.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkFTop_mm705.v -filesets [get_filesets *]
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkMLConsumer.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkMLConsumer.v -filesets [get_filesets *]
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkMLConsumer.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkMLConsumer.v -filesets [get_filesets *]
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkMLProducer.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkMLProducer.v -filesets [get_filesets *]
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkMLProducer.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkMLProducer.v -filesets [get_filesets *]
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkReceiver.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkReceiver.v -filesets [get_filesets *]
+update_files -from_files /home/cms/projects/mm705_v3/rtl/mkSender.v -to_files /home/cms/projects/mm705_v3/mm705/mm705.srcs/sources_1/imports/mm705_v3/rtl/mkSender.v -filesets [get_filesets *]
+launch_runs synth_1
+wait_on_run synth_1
+launch_runs impl_1
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+launch_impact 
+open_run impl_1
+report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -max_paths 10 -input_pins -name timing_1

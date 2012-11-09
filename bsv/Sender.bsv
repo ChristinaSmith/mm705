@@ -19,11 +19,6 @@ interface SenderIfc;
   interface Put#(MLMesg) mesg;
 endinterface
 
-typedef enum {
-  FrmHead,
-  MsgHead,
-  MsgData
-} FrmCompState deriving(Bits, Eq);
 
 (* synthesize *)
 module mkSender(SenderIfc);
@@ -58,9 +53,6 @@ Reg#(Bool)              bytesValid    <- mkReg(False);
 
 // Frame Source/Departure Logic
 Reg#(UInt#(16))         frameSrcCnt   <- mkReg(0);
-
-// TODO: think of appropriate grouping for this Reg
-Reg#(HexBDG)            hexBDGout     <-mkRegU;
 
 // Functions...
 function Bit#(8) addX (Bit#(8) y, Bit#(8) x) = y + x;

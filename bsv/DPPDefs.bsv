@@ -48,6 +48,16 @@ endinstance
 
 instance ByteVector #(DPPFrameHeader, 10);
   function Vector#(10,Bit#(8)) toByteVector (DPPFrameHeader x) = reverse(unpack(pack(x)));
+  function DPPFrameHeader fromByteVector (Vector#(10, Bit#(8)) x);
+    return DPPFrameHeader {
+      did: pack(reverse(takeAt(0, x))),
+      sid: pack(reverse(takeAt(2, x))),
+      fs:  unpack(pack(reverse(takeAt(4, x)))),
+      as:  unpack(pack(reverse(takeAt(6, x)))),
+      ac:  unpack(pack(reverse(takeAt(8, x)))),
+      f:   pack(reverse(takeAt(9, x)))
+    };
+  endfunction
 endinstance
 
 // DPP Message Header - 24B total...
@@ -80,6 +90,19 @@ endinstance
 
 instance ByteVector #(DPPMessageHeader, 24);
   function Vector#(24,Bit#(8)) toByteVector (DPPMessageHeader x) = reverse(unpack(pack(x)));
+  function DPPMessageHeader fromByteVector (Vector#(24, Bit#(8)) x);
+    return DPPMessageHeader {
+      tid: unpack(pack(reverse(takeAt(0, x)))),
+      fa:  unpack(pack(reverse(takeAt(4, x)))),
+      fv:  pack(reverse(takeAt(8, x))),
+      nm:  unpack(pack(reverse(takeAt(12, x)))),
+      ms:  unpack(pack(reverse(takeAt(14, x)))),
+      da:  unpack(pack(reverse(takeAt(16, x)))),
+      dl:  unpack(pack(reverse(takeAt(20, x)))),
+      mt:  pack(reverse(takeAt(22, x))),
+      tm:  pack(reverse(takeAt(23, x)))
+    };
+  endfunction
 endinstance
 
 // RDMA Protocol...
@@ -105,6 +128,15 @@ endinstance
 
 instance ByteVector #(RDMAMeta, 8);
   function Vector#(8,Bit#(8)) toByteVector (RDMAMeta x) = reverse(unpack(pack(x)));
+  function RDMAMeta fromByteVector (Vector#(8, Bit#(8)) x);
+    return RDMAMeta {
+      length: unpack(pack(reverse(takeAt(0,x)))),
+      opcode: pack(reverse(takeAt(4,x))),
+      portID: pack(reverse(takeAt(5,x))),
+      byte6:  pack(reverse(takeAt(6,x))),
+      byte7:  pack(reverse(takeAt(7,x)))
+    };
+  endfunction
 endinstance
 
 

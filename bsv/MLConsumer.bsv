@@ -12,6 +12,7 @@ import ClientServer ::*;
 interface MLConsumerIfc;
   interface Put#(MLMesg)  mesgExpected;
   interface Put#(MLMesg)  mesgReceived;
+  method Bit#(4) incorrectCnt;
 //  interface Put#(HexByte) dataExpected;
 //  interface Put#(HexByte) dataReceived;
 endinterface
@@ -29,6 +30,7 @@ Reg#(Bool)              cmpMetaMatch    <- mkRegU;
 Reg#(Bool)              cmpDataMatch    <- mkRegU;
 Reg#(UInt#(32))         incorrectMeta   <- mkReg(0);
 Reg#(UInt#(32))         incorrectData   <- mkReg(0);
+Reg#(UInt#(32))         incorrect       <- mkReg(0);
 Reg#(UInt#(32))         correctMeta     <- mkReg(0);
 Reg#(UInt#(32))         correctData     <- mkReg(0);
 Reg#(UInt#(32))         msgConsumeCnt   <- mkReg(0);
@@ -61,17 +63,6 @@ rule compareMeta (!isValid(bytesRemain));
 
 // sls: Note this assignment will also prevent this rule from re-firing until Invald
   bytesRemain <= tagged Valid rcvdLen;
-
-// sls: We will do this sort of thing in the data consumer rule...
-  /*
-  Bit#(32) x = pack(rcvd.length);
-  wordsNeeded <=  (rcvd.length >> 4) + ((x[3:0] > 0) ? 1 : 0);
-  wordCnt <= (wordsNeeded == wordCnt) ? 0: wordCnt + 1;
-  if(wordsNeeded == wordCnt) begin
-    metaIngressExpF.deq;
-    metaIngressRcvF.deq;
-  end
-  */
 
   Bool metaMatch = (expd == rcvd);
   cmpMetaMatch <= metaMatch;
@@ -135,8 +126,13 @@ rule compareData (isValid(bytesRemain));
 
  endrule
 
+ rule calcIncorrect;
+  incorrect <=(incorrectData) | (incorrectMeta);
+ endrule
+
   interface mesgExpected = toPut(mesgIngressExpF);  //create and use correct FIFO here
   interface mesgReceived = toPut(mesgIngressRcvF);
+  method Bit#(4) incorrectCnt = pack(incorrect)[3:0];
 //  interface dataExpected = toPut(dataIngressExpF);
 //  interface dataReceived = toPut(dataIngressRcvF);
 endmodule
