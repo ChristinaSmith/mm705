@@ -37,7 +37,7 @@ Reg#(DPPMessageHeader)  mh            <- mkReg(defaultValue);
 Reg#(Vector#(12, Bit#(8))) mhFirst    <- mkRegU;
 
 // ByteShifter State
-ByteShifter#(16,16,32)  byteShifter   <- mkByteShifter;  // What we compose our frames into
+ByteShifter#(16,16,48)  byteShifter   <- mkByteShifter;  // What we compose our frames into
 Reg#(UInt#(16))         bytesToDeq    <- mkReg(0);
 Reg#(Bool)              bytesValid    <- mkReg(False);
 

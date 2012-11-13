@@ -62,7 +62,7 @@ mkConnection(producer1.mesg, sender.mesg);
 
 mkConnection(sender.datagram, fdu.datagramSnd);
 
-mkConnection(fdu.datagramRcv, fau.datagramSnd); 
+mkConnection(fdu.datagramRcv, fau.datagramSnd);
 
 mkConnection(fau.datagramRcv, receiver.datagram);
 

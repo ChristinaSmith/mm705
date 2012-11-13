@@ -42,7 +42,7 @@ Reg#(Bool)              mhValid       <- mkReg(False);
 Reg#(DPPMessageHeader)  mh            <- mkReg(defaultValue);
 
 // ByteShifter State...
-ByteShifter#(16,16,32)  byteShifter   <- mkByteShifter;  // What we compose our frames into
+ByteShifter#(16,16,48)  byteShifter   <- mkByteShifter;  // What we compose our frames into
 Reg#(UInt#(16))         bytesRemainMD <- mkReg(0);       // How many more Bytes we need to enq this MD
 Reg#(Bit#(8))           byteOut       <- mkRegU;         // Debug at output
 Reg#(UInt#(16))         bytesDeqd     <- mkReg(0);       // Debug at output
@@ -63,12 +63,6 @@ function RDMAMeta metaMorpher (MLMeta m);
   newMeta.opcode = m.opcode;
   newMeta.portID = 0;
   return newMeta;
-endfunction
-
-function HexByte padHexByte (Vector#(vsize, Bit#(8)) v);
-  HexByte newVector = ?;
-  for(Integer i=0; i<valueof(vsize); i = i+1) newVector[i] = v[i];
-  return newVector;
 endfunction
 
 // Rules...

@@ -57,6 +57,12 @@ typedef enum {
   MsgData
 } FrmCompState deriving(Bits, Eq);
 
+function HexByte padHexByte (Vector#(vsize, Bit#(8)) v);
+  HexByte newVector = ?;
+  for(Integer i=0; i<valueof(vsize); i = i+1) newVector[i] = v[i];
+  return newVector;
+endfunction
+
 interface MLProducer;
   interface GetS#(MLMeta) meta;    // GetS splits the "first" and "deq" methods so we can observe
   interface Get#(HexByte) data;    // Our message data

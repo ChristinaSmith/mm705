@@ -39,19 +39,33 @@ module mkFAU(FAUIfc);
 
 FIFO#(HexBDG)                datagramIngressF   <- mkFIFO;
 FIFO#(HexBDG)                datagramEgressF    <- mkFIFO;
+FIFO#(HexBDG)                ackF               <- mkFIFO;
 FIFOF#(UInt#(14))            lengthF            <- mkFIFOF1;
 Reg#(UInt#(14))               countWrd           <- mkReg(1); 
+Reg#(UInt#(16))              fid                <- mkReg(0);
+Reg#(UInt#(16))              fsCnt              <- mkReg(1000);
+Reg#(Bit#(16))              did                <- mkReg(0);
+Reg#(Bit#(16))              sid                <- mkReg(0);
+Reg#(Bool)                   grabFID            <- mkReg(True);
 Reg#(UInt#(14))               countRdReq         <- mkReg(0);
 Reg#(UInt#(14))               countRd            <- mkReg(0);
 Reg#(UInt#(14))               readAddr           <- mkReg(0);
 Reg#(UInt#(14))               writeAddr          <- mkReg(0);
 Reg#(Bool)                   firstTime          <- mkReg(True);
-Accumulator2Ifc#(Int#(10))   readCredit         <- mkAccumulator2;
+Accumulator2Ifc#(Int#(14))   readCredit         <- mkAccumulator2;
 
 BRAM_Configure cfg = defaultValue;
 cfg.memorySize = 16384;
 cfg.latency    = 1;
 BRAM2Port#(UInt#(14), HexBDG) bram <- mkBRAM2Server(cfg);
+
+rule getFID(grabFID);
+  HexByte y = datagramIngressF.first.data;
+  did <= unpack({pack(y[0]), pack(y[1])});
+  sid <= unpack({pack(y[2]), pack(y[3])});
+  fid <= unpack({pack(y[4]), pack(y[5])});
+  grabFID <= False;
+endrule
 
 rule writeBRAM;                                                              // For every incident Mesg word...
   let y = datagramIngressF.first; datagramIngressF.deq;                      // dequeue the incident Mesg
@@ -59,7 +73,13 @@ rule writeBRAM;                                                              // 
   bram.portA.request.put(makeRequest(True, writeAddr, y));                   // write the data to BRAM
   readCredit.acc1(1);                                                        // Add one to read credits
   countWrd <= isEOP ? 1 : countWrd + 1;                                      // update our count of message length
-  if (isEOP) lengthF.enq(countWrd);                                             // send a token to read port on EOP
+  if (isEOP) begin 
+    lengthF.enq(countWrd); 
+    grabFID <= True;
+    Vector#(10, Bit#(8)) fhV = toByteVector(DPPFrameHeader{did:sid,sid:did,fs:fsCnt,as:fid,ac:1,f:0});
+    ackF.enq(HexBDG{data: padHexByte(fhV), nbVal: 10, isEOP: True});
+    fsCnt <= fsCnt + 1;
+  end                                                                        // send a token to read port on EOP
   writeAddr <= generateAddr(isEOP, writeAddr);                               // update the Write Address
 endrule
 
@@ -84,7 +104,7 @@ endrule
 
 interface Server datagramSnd;
   interface request = toPut(datagramIngressF);//TODO:input FIFO
-//  interface response = toGet(); //TODO: to be used for ACKS
+  interface response = toGet(ackF); //TODO: to be used for ACKS
 endinterface
 interface Client datagramRcv;
   interface request = toGet(datagramEgressF); //TODO: output FIFO
